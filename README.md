@@ -38,7 +38,7 @@
  * Group: de.telekom.sea
  * Package: de.telekom.sea.mystuff.backend
  * Maven
- * Java 8
+ * Java 11
  * Dependendencies: Lombok, MySQL Driver, Spring Boot Actuator, Spring Boot DevTools, Spring Data JPA, Spring Web
 
 ### 2. Neues GitHub-Projekt anlegen / verbinden
@@ -161,6 +161,7 @@ public class SpringFoxConfig {
 
 * Hint: @Component
 * Hint: extends ApplicationListener<ContextRefreshedEvent>
+* Hint: Einfügen über JPA
 * Check: In PostMan: Rückgabe der Testdatensätze
 
 ### 10. Verbliebene CRUD-Methoden implementieren
