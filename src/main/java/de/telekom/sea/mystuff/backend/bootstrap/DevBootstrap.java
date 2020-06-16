@@ -24,12 +24,11 @@ public class DevBootstrap implements ApplicationListener<ContextRefreshedEvent> 
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		repository.save(Item.builder().name("Lawn mower").amount(1).lastUsed(Date.valueOf("2019-05-01"))
-				.location("Basement").build());
-		repository.save(Item.builder().name("DVD player").amount(1).lastUsed(Date.valueOf("2014-12-31"))
-				.location("Basement").build());
-		repository.save(Item.builder().name("Car tires (winter)").amount(4).lastUsed(Date.valueOf("2010-03-01"))
-				.location("Garage").build());
+
+		repository.save(Item.builder().name("Lawn mower").description("My good old lawnmower").amount(1).lastUsed(Date.valueOf("2019-05-01")).location("Basement").build());
+		repository.save(Item.builder().name("DVD player").description("from 1988").amount(1).lastUsed(Date.valueOf("2014-12-31")).location("Basement").build());
+		repository.save(Item.builder().name("Car tires (winter)").description("no alu").amount(4).lastUsed(Date.valueOf("2010-03-01")).location("Garage").build());
+
 	}
 
 }

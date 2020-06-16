@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import de.telekom.sea.mystuff.backend.model.Item;
 import de.telekom.sea.mystuff.backend.repository.ItemRepository;
 
 @RestController
-@CrossOrigin
 @RequestMapping("/api/v1/")
+@CrossOrigin
 public class ItemRestController {
 
 	private final ItemRepository repository;
@@ -33,10 +34,18 @@ public class ItemRestController {
 
 	@GetMapping("items")	
 	public List<Item> getAll() {
+		
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		return repository.findAll();
 	}
 	
-	@GetMapping("item/{id}")	
+	
+	
+	@GetMapping("items/{id}")	
 	public Item get(@PathVariable Long id) {
 		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 	}
@@ -48,7 +57,7 @@ public class ItemRestController {
 		return repository.save(newItem);
 	}
 	
-	@PutMapping("item/{id}")
+	@PutMapping("items/{id}")
 	public Item replace(@RequestBody Item newItem, @PathVariable Long id) {
 		return repository.findById(id).map(item -> {
 			item.setAmount(newItem.getAmount());
@@ -61,7 +70,7 @@ public class ItemRestController {
 		}).orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 
-	@DeleteMapping("item/{id}")
+	@DeleteMapping("items/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void delete(@PathVariable Long id) {
 		try {

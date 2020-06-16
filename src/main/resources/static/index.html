@@ -1,0 +1,170 @@
+<html>
+<head>
+	<title>Items</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  
+</head>
+
+<body>
+<h1>Hallo Welt</h1>
+
+<button onclick="fetchItems()">Refresh</button>
+<button onclick="createItem()">Create Item</button>
+<div class="container-fluid">
+<div id="table">
+	<table id="item_table" class="table table-hover">
+		<thead class="thead-light">
+		  <tr>
+			<th scope="col">#</th>
+			<th scope="col">Name</th>
+			<th scope="col">Location</th>
+			<th scope="col">Amount</th>
+			<th scope="col">Description</th>
+			<th scope="col"></th>
+			<th scope="col"></th>
+			<th scope="col"></th>
+		  </tr>
+		</thead>
+		<tbody>
+		</tbody>
+	  </table>
+</div>
+<div id="edit_form">
+	<div class="container-fluid"> 
+		<br>
+		<form id="myform">
+			<input type="hidden" id="itemId"  />
+		  <div class="form-group">
+			<label for="name">Name</label>
+			<input type="text" class="form-control" id="name" required="true" >
+		  </div>
+		  <div class="form-group">
+			<label for="location">Location</label>
+			<input type="text" class="form-control" id="location" >
+		  </div>
+		  <div class="form-group">
+			<label for="amount">Amount</label>
+			<input type="number" class="form-control" id="amount" >
+		  </div>
+		  <div class="form-group">
+			<label for="description">Description</label>
+			<textarea class="form-control" id="description" rows="3"></textarea>
+		  </div>
+		  <div class="form-group">
+		  </div>
+		</form>
+		<button id="submitButton" type="submit" form="myform" class="btn btn-primary" onclick="saveForm(event)">Save</button>
+		<button class="btn btn-secondary">Back to List</button>
+	  </div>
+</div>
+</div>
+<script>
+loadItems();
+
+function loadItems() {
+
+	fetch( 'http://localhost:8080/api/v1/items', { method: 'GET' } ).then( result => result.json()).then(data => displayTable(data));
+}
+
+function displayTable(data) {
+	
+	
+	let table = document.querySelector("#item_table");
+	
+	let rows = '';
+
+	data.forEach(item => {
+		const row = `
+			<tr>
+				<td>${item.id}</td>
+				<td>${item.name}</td>
+				<td>${item.location}</td>
+				<td>${item.amount}</td>
+				<td>${item.description}</td>
+				<td><button onclick="editItem(${item.id})">Edit</button></td>
+				<td><button onclick="deleteItem(${item.id})">Delete</button></td>
+				<td></td>
+			</tr>
+		
+		`;
+		rows =rows + row;
+	});
+	let tbody = table.getElementsByTagName("tbody")[0];
+	tbody.innerHTML = rows;
+
+
+}
+
+function createItem() {
+	let item = {
+		id: null,
+		name: null,
+		description: null,
+		location: null,
+		amount: 1
+	}
+	displayForm(item);
+}
+
+function editItem(itemId) {
+	fetch( 'http://localhost:8080/api/v1/items/' + itemId, { method: 'GET' } ).then( result => result.json()).then(data => displayForm(data));
+
+}
+
+function displayForm(item ) {
+	
+	setFormValue("itemId", item.id);
+	setFormValue("name", item.name);
+	setFormValue("location", item.location);
+	setFormValue("amount", item.amount);
+	document.querySelector("#description").innerHTML = item.description ? item.description : '';
+	//document.querySelector("#submitButton").onclick = saveForm;
+}
+
+async function saveForm(event) {
+	event.preventDefault();
+	let id = document.querySelector("#itemId").value;
+
+	const item = {
+      id: 		   id,
+      name:        getFormValue("name"),
+      location:    getFormValue("location"),
+      amount:      getFormValue("amount"),
+      description: getFormValue('description')
+	};
+	
+    let response = await fetch( id ? 'http://localhost:8080/api/v1/items/' + id : 'http://localhost:8080/api/v1/items', {
+      body: JSON.stringify( item ),
+      headers: { 'Content-Type': 'application/json' },
+      method: id ? 'PUT' : 'POST'
+	} );
+	
+	if (!response.ok) {
+		alert("Could not be saved");
+	} 
+	loadItems();
+}
+
+async function deleteItem(id) {
+	let response = await fetch( 'http://localhost:8080/api/v1/items/' + id , {
+      method:  'DELETE'
+	} );
+	
+	if (!response.ok) {
+		alert("Was not deleted");	
+	}
+	loadItems();
+}
+
+function setFormValue(id, value) {
+	document.querySelector("#"+id).value = value;
+}
+
+function getFormValue(id) {
+	return document.querySelector("#"+id).value;
+}
+
+</script>
+</body>
+</html>
